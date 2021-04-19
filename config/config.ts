@@ -174,9 +174,49 @@ export default defineConfig({
                   name: '阻断策略编辑',
                   path: '/handle/blockStrategy/edit',
                   component: './handle/blockStrategy/edit',
-                }
+                },
+                {
+                  name: '阻断白名单',
+                  path: '/handle/whitelist',
+                  component: './handle/whitelist',
+                  routes: [
+                    {
+                      path: '/handle/whitelist',
+                      redirect: '/handle/whitelist/sourceIP',
+                    },
+                    //源IP白名单
+                    {
+                      name: 'sourceIP',
+                      icon: 'smile',
+                      path: '/handle/whitelist/sourceIP',
+                      component: './handle/whitelist/sourceIP',
+                    },
+                    //目的IP白名单
+                    {
+                      name: 'destIP',
+                      icon: 'smile',
+                      path: '/handle/whitelist/destIP',
+                      component: './handle/whitelist/destIP',
+                    },
+                    //登录账号白名单
+                    {
+                      name: 'account',
+                      icon: 'smile',
+                      path: '/handle/whitelist/account',
+                      component: './handle/whitelist/account',
+                    },
+                    //自定义白名单
+                    {
+                      name: 'custom',
+                      icon: 'smile',
+                      path: '/handle/whitelist/custom',
+                      component: './handle/whitelist/custom',
+                    }
+                  ]
+                },
               ],
             },
+
             {
               path: '/userManage',
               name: 'userManage',
