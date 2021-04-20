@@ -211,6 +211,11 @@ export default defineConfig({
                       icon: 'smile',
                       path: '/handle/whitelist/custom',
                       component: './handle/whitelist/custom',
+                    },
+                    {
+                      //自定义白名单编辑
+                      path: '/handle/whitelist/custom/edit',
+                      component: './handle/whitelist/custom/edit',
                     }
                   ]
                 },

@@ -17,7 +17,7 @@ export interface WhiteUserItem extends BaseTableListItem{
 
 export interface CustomeWhiteListItem extends BaseTableListItem{
   key: string;
-  user: string;
+  name: string;
   sourceIp: string;
   destIp: string;
   timeRange: string;

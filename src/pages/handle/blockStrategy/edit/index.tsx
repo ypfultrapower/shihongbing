@@ -15,7 +15,7 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import IpMdalForm from "@/pages/handle/blockStrategy/edit/components/IpMdalForm";
 import moment, {Moment} from "moment";
 import RegMdalForm from "@/pages/handle/blockStrategy/edit/components/RegMdalForm";
-
+import RegTableForm from "@/pages/handle/blockStrategy/edit/components/RegTableForm";
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
@@ -29,12 +29,23 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   //const { query = {} }  = props.history.location.query;
   const state = history.location.state;
   const editType = state.editType;
+  const item = state.item;
+  const tableData:Array<{}> =  new Array<{}>()
+  if(item && item.commond.length>0){
+    for(let i = 0;i<item.commond.length;i++){
+      let element = {
+        key:i+"",
+        reg:item.commond[i]
+      };
+      tableData.push(element)
+    }
+  }
   useEffect(() => {
     //编辑初始化表单
     if (editType==="edit") {
-      const item = state.item;
       form.setFieldsValue({
-        ...item
+        ...item,
+        commond:tableData
       });
       if(item.timeRange && item.timeRange!=""){
         form.setFieldsValue({timeRange:[moment(item.timeRange.split("&")[0]),moment(item.timeRange.split("&")[1])]})
@@ -53,9 +64,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
       }
       setSourceIpContent(item.sourceIp)
       setDestIpContent(item.destIp)
-      setCommondContent(item.commond.join("\n"))
       setStrategyType(item.type)
-      setCommondArray(item.commond)
     }else{
       form.resetFields();
     }
@@ -67,8 +76,6 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const [strategyType, setStrategyType] = useState("login");
   const[sourceIpContent,setSourceIpContent] = useState("");
   const[destIpContent,setDestIpContent] = useState("");
-  const[commondArray,setCommondArray] = useState<string[]>([]);
-  const[commondContent,setCommondContent] = useState("");
   const [ipType, setIpType] = useState("");
   const [form] = Form.useForm();
   const formItemLayout = {
@@ -104,9 +111,21 @@ const BasicForm: FC<BasicFormProps> = (props) => {
     }
     let action = actions.length ==1 ? actions[0]:actions[0]+"&"+actions[1];
     values.action = action;
-    values.commond = commondArray
     values.destIp = destIpContent
-    values.sourceIp = sourceIpContent
+    //操作策略没有源IP
+    if(strategyType ==="operation"){
+      values.sourceIp = ""
+      //命令处理
+      if(values.commond.length>0){
+        let commondArray:string[] = new Array();
+        for(let i=0;i<values.commond.length;i++){
+          commondArray.push(values.commond[i].reg)
+        }
+        values.commond =  commondArray;
+      }
+    }else{
+      values.sourceIp = sourceIpContent
+    }
     dispatch({
       type: 'blockStrategy/submitForm',
       payload: {optType:editType,...values},
@@ -140,11 +159,6 @@ const BasicForm: FC<BasicFormProps> = (props) => {
     setIpType("destIp")
     setVisible(true);
   }
-
-  const showRegFormModal=()=>{
-    setRegModalVisible(true);
-  }
-
   return (
     <PageHeaderWrapper content={editType==="add"? "阻断策略添加":"阻断策略编辑"} title={false}>
       <Card bordered={false}>
@@ -174,16 +188,6 @@ const BasicForm: FC<BasicFormProps> = (props) => {
                 setDestIpContent(ipContent);
               }
               setVisible(false);
-            }else if(name==="regForm"){
-              commondArray.push(values.reg);
-              let content = "";
-              commondArray.forEach((value,index)=>{
-                if(value !=""){
-                  content = content+value+"\n"
-                }
-              })
-              setCommondContent(content);
-              setRegModalVisible(false);
             }
           }}
         >
@@ -195,7 +199,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             initialValues={{
-              'action': ['warning', 'block'],
+              'action': ['warning', 'block']
             }}
           >
             <FormItem name="id" hidden/>
@@ -256,30 +260,6 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             </FormItem>
             }
 
-            {strategyType === "operation" &&
-            <FormItem
-              {...formItemLayout}
-              label={"封禁命令"}
-              name="commond"
-              help={"由于正则表达式的特殊性,该项表单只支持只读模式,请使用后面的添加按钮进行封禁命令添加"}
-            >
-              <Row gutter={30}>
-                <Col span={20}>
-                  <TextArea
-                    style={{ minHeight: 32 }}
-                    readOnly
-                    rows={8}
-                    value={commondContent}
-                  />
-                </Col>
-
-                <Col span={4}>
-                  <Button htmlType="button" type={"primary"} onClick={showRegFormModal}>添加正则</Button>
-                </Col>
-              </Row>
-            </FormItem>
-            }
-
             <FormItem
               {...formItemLayout}
               label={"封禁目的IP"}
@@ -331,6 +311,17 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               />
             </FormItem>
 
+            {strategyType ==="operation" &&
+              <FormItem
+                {...formItemLayout}
+                label={"封禁命令"}
+                name="commond"
+                help={"由于正则表达式的特殊性,请使用添加按钮进行封禁命令添加"}
+              >
+                <RegTableForm/>
+              </FormItem>
+            }
+
             <Form.Item {...formItemLayout}
               name="enable" label="是否启用" valuePropName="checked" initialValue={true} >
               <Switch  checkedChildren={'启用'} unCheckedChildren={'禁用'} />
@@ -371,5 +362,5 @@ const BasicForm: FC<BasicFormProps> = (props) => {
 };
 
 export default connect(({ loading }: { loading: { effects: { [key: string]: boolean } } }) => ({
-  submitting: loading.effects['formAndbasicForm/submitRegularForm'],
+  submitting: loading.effects['blockStrategy/submitForm'],
 }))(BasicForm);
