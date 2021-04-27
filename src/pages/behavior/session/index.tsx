@@ -1,12 +1,13 @@
 import React, {useRef, useState} from "react";
 import ProTable, {ActionType, ProColumns} from "@ant-design/pro-table";
-import {Card, message, Modal} from "antd";
+import {Button, Card, Dropdown, Menu, message, Modal} from "antd";
 import {PageHeaderWrapper} from "@ant-design/pro-layout";
 import {SessionTableListItem} from "@/pages/behavior/session/data";
-import {blockSession, querySession} from "@/pages/behavior/session/service";
+import {batchDeleteSession, blockSession, querySession} from "@/pages/behavior/session/service";
 import DetailModal from "@/pages/behavior/session/components/DetailModal";
 import RecordModal from "@/pages/behavior/session/components/RecordModal";
 import moment from "moment";
+import {DownOutlined} from "@ant-design/icons";
 
 
 const TableList: React.FC<{}> = () => {
@@ -33,9 +34,9 @@ const TableList: React.FC<{}> = () => {
   ];
   const columns:ProColumns<SessionTableListItem>[] = [
     {
-      title: 'Agent编号',
-      dataIndex: 'agentId',
-      key:'agentId'
+      title: '资产IP',
+      dataIndex: 'assetIp',
+      key:'assetIp'
     },
     {
       title: '登录账号',
@@ -46,6 +47,7 @@ const TableList: React.FC<{}> = () => {
       title: '进程ID',
       dataIndex: 'processId',
       key:'processId',
+      hideInSearch: true
     },
     {
       title: '源Ip',
@@ -61,13 +63,15 @@ const TableList: React.FC<{}> = () => {
       title: '开始时间',
       dataIndex: 'startTime',
       key:'startTime',
+      valueType: 'dateTime',
       sorter: (a,b)=>{
-        return moment(a.startTime, 'YYYYMMDDHHmmss').toDate().getTime() - moment(b.startTime, "YYYYMMDDHHmmss").toDate().getTime()
+        return moment(a.startTime, 'YYYY-MM-DD HH:mm:ss').toDate().getTime() - moment(b.startTime, "YYYY-MM-DD HH:mm:ss").toDate().getTime()
       }
     },
     {
       title: '结束时间',
       dataIndex: 'endTime',
+      valueType: 'dateTime',
       key:'endTime',
     },
     {
@@ -127,12 +131,46 @@ const TableList: React.FC<{}> = () => {
             });
           }}>断开</a>)
         }else{
-          return (<>-</>)
+          return (<>
+            <a
+              onClick={() =>{
+                const array: SessionTableListItem[] = new Array();
+                array.push(record);
+                batchDelete(array);
+              }}
+            >
+              删除
+            </a></>)
         }
       }
     }
   ];
-
+  const batchDelete = (selectedRows: SessionTableListItem[]) => {
+    Modal.confirm({
+      title: '删除会话',
+      content: '确定删除该会话吗？',
+      okText: '确认',
+      cancelText: '取消',
+      onOk: async () => {
+        const hide = message.loading('正在删除');
+        if (!selectedRows) return true;
+        try {
+          const params =  selectedRows.map((row) => {
+            return {"id":row.id}
+          });
+          await batchDeleteSession(params);
+          hide();
+          message.success('删除成功，即将刷新');
+          if(actionRef.current) actionRef.current.reload();
+          return true;
+        } catch (error) {
+          hide();
+          message.error('删除失败，请重试');
+          return false;
+        }
+      }
+    });
+  };
   const showDetailModal = (item: SessionTableListItem) =>{
     setDetailModalVisible(true);
     setCurrentItem(item);
@@ -156,6 +194,29 @@ const TableList: React.FC<{}> = () => {
           })}
           actionRef={actionRef}
           rowKey="id"
+          toolBarRender={(action, { selectedRows }) => [
+            selectedRows && selectedRows.length > 0 && (
+              <Dropdown
+                overlay={
+                  <Menu
+                    onClick={async (e) => {
+                      if (e.key === 'batchDelete') {
+                        await batchDelete(selectedRows);
+                        action.reload();
+                      }
+                    }}
+                    selectedKeys={[]}
+                  >
+                    <Menu.Item key="batchDelete">批量删除</Menu.Item>
+                  </Menu>
+                }
+              >
+                <Button>
+                  批量操作 <DownOutlined />
+                </Button>
+              </Dropdown>
+            )
+          ]}
           expandable={{
             expandedRowRender:record =>{return expandableRender(record)},
             expandRowByClick:false

@@ -1,7 +1,9 @@
 import {BaseTableListItem} from "@/common/data/commondata";
+import {BlockWarningItem} from "@/pages/warning/blockWarning/data";
 
 export interface SessionTableListItem extends BaseTableListItem{
   key: string;
+  assetIp: string;
   agentId: string;
   user: string;
   processId: string;
@@ -14,10 +16,8 @@ export interface SessionTableListItem extends BaseTableListItem{
   fileName: string;
   filePath: string;
   assetGroupName:string;
+  closeType:string;
+  warnings: Partial<BlockWarningItem[]>
 }
 
-export interface SessionDetail{
-  title: any;
-  value: any;
-}
 

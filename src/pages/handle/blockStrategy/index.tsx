@@ -17,25 +17,25 @@ import {
   batchEnableStrategy,
   queryStrategy
 } from "@/pages/handle/blockStrategy/service";
-import {loginTypeDeailColumns, operationTypeDeailColumns} from "@/pages/handle/blockStrategy/common";
+import {firstDeailColumns,secondDeailColumns,thirdDeailColumns } from "@/pages/handle/blockStrategy/common";
 import DetailModal from "./components/DetailModal";
 
 const BlockStrategy: React.FC<{}> = () => {
   const actionRef = useRef<ActionType>();
   const [detailModalVisible,setDetailModalVisible]  = useState<boolean>(false);
   const [currentItem, setCurrentItem] = useState<Partial<StrategyTableListItem> | undefined>(undefined);
-  const [strategyType, setStrategyType] = useState<string>("login");
+  const [strategyType, setStrategyType] = useState<string>("whitelist");
   const getTree  = ():DataNode[] =>{
     let childrenNodes : DataNode[] = new Array();
     let loginLeaf:DataNode= {
-      key: "login",
-      title: "登录类阻断策略",
+      key: "whitelist",
+      title: "白名单策略",
       icon: <Icon name="tag"></Icon>
     }
 
     let operationLeaf:DataNode= {
-      key: "operation",
-      title: "操作类阻断策略",
+      key: "blacklist",
+      title: "黑名单策略",
       icon: <Icon name="tag"></Icon>
     }
     childrenNodes.push(loginLeaf);
@@ -71,12 +71,21 @@ const BlockStrategy: React.FC<{}> = () => {
       key:'type',
       hideInSearch:true,
       render: (_, record) =>{
-        if(record.type === "login"){
-          return "登录类"
-        }else if(record.type === "operation"){
-          return "操作类"
+        if(record.type === "whitelist" ){
+          return "白名单"
+        }else if(record.type === "blacklist"){
+          return "黑名单"
         }
         return "-"
+      }
+    },
+    {
+      title: '策略级别',
+      dataIndex: 'level',
+      valueEnum: {
+        '1': {text: '一级', status: 'Success'},
+        '2': {text: '二级', status: 'Warning'},
+        '3': {text: '三级', status: 'Error'}
       }
     },
     {
@@ -97,22 +106,6 @@ const BlockStrategy: React.FC<{}> = () => {
       valueEnum: {
         'true': {text: '启用', status: 'Success'},
         'false': {text: '禁用', status: 'Default'}
-      }
-    },
-    {
-      title: '策略动作',
-      dataIndex: 'action',
-      hideInSearch: true,
-      key:'type',
-      render: (_, record) =>{
-        if(record.action === "warning"){
-          return (<span style={{ fontSize: 14 }}>告警</span>)
-        }else if(record.action === "block"){
-          return (<span style={{ fontSize: 14 }}>阻断</span>)
-        }else if(record.action === "warning&block" || record.action === "block&warning"){
-          return (<span style={{ fontSize: 14 }}>告警&阻断</span>)
-        }
-        return "-"
       }
     },
     {
@@ -187,7 +180,7 @@ const BlockStrategy: React.FC<{}> = () => {
   //批量启用
   const batchEnable =  (selectedRows: StrategyTableListItem[]) => {
     Modal.confirm({
-      title: '启用阻断策略',
+      title: '启用策略',
       content: '确定启用该策略吗？',
       okText: '确认',
       cancelText: '取消',
@@ -215,7 +208,7 @@ const BlockStrategy: React.FC<{}> = () => {
   //批量禁用
   const batchDisable =  (selectedRows: StrategyTableListItem[]) => {
     Modal.confirm({
-      title: '禁用阻断策略',
+      title: '禁用策略',
       content: '确定禁用该策略吗？',
       okText: '确认',
       cancelText: '取消',
@@ -268,18 +261,27 @@ const BlockStrategy: React.FC<{}> = () => {
   };
   const expandableRender = (record: StrategyTableListItem)=>{
     return <Card title="其他详细信息" bordered={false} headStyle={{backgroundColor:"lightskyblue"}} bodyStyle={{backgroundColor:"#e9e9e9"}}>
-      {strategyType === "operation" ? operationTypeDeailColumns.map(value => {
-        if(value.dataIndex === "commond"){
-          let commondArray :string[] = record[value.dataIndex];
-          return <p><strong>{value.title}: </strong>{commondArray.join(";")}</p>
-        }else if(value.dataIndex === "destIp"){
+      {(record.level === "1") && firstDeailColumns.map(value => {
+        if(value.dataIndex === "destIp" || value.dataIndex ==="sourceIp"){
           let tmpArr =record[value.dataIndex].split("\n");
           return <p><strong>{value.title}: </strong>{tmpArr.join(";")}</p>
         }else{
           return <p><strong>{value.title}: </strong>{record[value.dataIndex as string]}</p>
         }
-      }) : loginTypeDeailColumns.map(value => {
+      })}
+      {(record.level === "2") && secondDeailColumns.map(value => {
         if(value.dataIndex === "destIp" || value.dataIndex ==="sourceIp"){
+          let tmpArr =record[value.dataIndex].split("\n");
+          return <p><strong>{value.title}: </strong>{tmpArr.join(";")}</p>
+        }else{
+          return <p><strong>{value.title}: </strong>{record[value.dataIndex as string]}</p>
+        }
+      })}
+      {record.level==="3" && thirdDeailColumns.map(value => {
+        if(value.dataIndex === "command"){
+          let commondArray :string[] = record[value.dataIndex];
+          return <p><strong>{value.title}: </strong>{commondArray.join(";")}</p>
+        }else if(value.dataIndex === "destIp" || value.dataIndex ==="sourceIp"){
           let tmpArr =record[value.dataIndex].split("\n");
           return <p><strong>{value.title}: </strong>{tmpArr.join(";")}</p>
         }else{

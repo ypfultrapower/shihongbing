@@ -6,7 +6,6 @@ import {
   Form,
   Row,
   Col,
-  Checkbox,
   Switch, Select, message
 } from 'antd';
 import { connect, Dispatch,history} from 'umi';
@@ -31,11 +30,11 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const editType = state.editType;
   const item = state.item;
   const tableData:Array<{}> =  new Array<{}>()
-  if(item && item.commond.length>0){
-    for(let i = 0;i<item.commond.length;i++){
+  if(item && item.level==="3" && item.command.length>0){
+    for(let i = 0;i<item.command.length;i++){
       let element = {
         key:i+"",
-        reg:item.commond[i]
+        reg:item.command[i]
       };
       tableData.push(element)
     }
@@ -45,17 +44,10 @@ const BasicForm: FC<BasicFormProps> = (props) => {
     if (editType==="edit") {
       form.setFieldsValue({
         ...item,
-        commond:tableData
+        command:tableData
       });
-      if(item.timeRange && item.timeRange!=""){
-        form.setFieldsValue({timeRange:[moment(item.timeRange.split("&")[0]),moment(item.timeRange.split("&")[1])]})
-      }
-      if(item.action ==="block&warning" || item.action === "warning&block"){
-        form.setFieldsValue({action:['warning', 'block']})
-      }else if(item.action ==="block"){
-        form.setFieldsValue({action:['block']})
-      }else if(item.action ==="warning"){
-        form.setFieldsValue({action:['warning']})
+      if(item.validTime && item.validTime!=""){
+        form.setFieldsValue({validTime:[moment(item.validTime.split("&")[0]),moment(item.validTime.split("&")[1])]})
       }
       if(item.enable==="true"){
         form.setFieldsValue({ enable: true })
@@ -65,6 +57,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
       setSourceIpContent(item.sourceIp)
       setDestIpContent(item.destIp)
       setStrategyType(item.type)
+      setLevel(item.level)
     }else{
       form.resetFields();
     }
@@ -73,7 +66,8 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   const { submitting } = props;
   const [visible, setVisible] = useState(false);
   const [regModalVisible, setRegModalVisible] = useState(false);
-  const [strategyType, setStrategyType] = useState("login");
+  const [strategyType, setStrategyType] = useState("whitelist");
+  const [level, setLevel] = useState("1");
   const[sourceIpContent,setSourceIpContent] = useState("");
   const[destIpContent,setDestIpContent] = useState("");
   const [ipType, setIpType] = useState("");
@@ -100,31 +94,26 @@ const BasicForm: FC<BasicFormProps> = (props) => {
   //表单提交
   const onFinish = (values: { [key: string]: any }) => {
     const { dispatch } = props;
-    let actions:string[] = values.action;
-    if(values.timeRange){
-      let times: Moment[] = values.timeRange;
+    if(values.validTime){
+      let times: Moment[] = values.validTime;
       if(times.length ==2){
         let start = moment(times[0]).format('YYYY-MM-DD HH:mm:ss');
         let end = moment(times[1]).format('YYYY-MM-DD HH:mm:ss');
-        values.timeRange = start+"&"+end;
+        values.validTime = start+"&"+end;
       }
     }
-    let action = actions.length ==1 ? actions[0]:actions[0]+"&"+actions[1];
-    values.action = action;
     values.destIp = destIpContent
+    values.sourceIp = sourceIpContent
     //操作策略没有源IP
-    if(strategyType ==="operation"){
-      values.sourceIp = ""
+    if(values.level ==="3"){
       //命令处理
-      if(values.commond.length>0){
+      if(values.command.length>0){
         let commondArray:string[] = new Array();
-        for(let i=0;i<values.commond.length;i++){
-          commondArray.push(values.commond[i].reg)
+        for(let i=0;i<values.command.length;i++){
+          commondArray.push(values.command[i].reg)
         }
-        values.commond =  commondArray;
+        values.command =  commondArray;
       }
-    }else{
-      values.sourceIp = sourceIpContent
     }
     dispatch({
       type: 'blockStrategy/submitForm',
@@ -229,16 +218,34 @@ const BasicForm: FC<BasicFormProps> = (props) => {
                 },
               ]}
             >
-              <Select placeholder="请选择策略类型" onChange={(selectValue)=>{setStrategyType(selectValue as string)}}>
-                <Option value="login">登录类策略</Option>
-                <Option value="operation">操作类策略</Option>
+              <Select placeholder="请选择策略类型" onChange={(selectValue)=>{setStrategyType(selectValue as string)}} >
+                <Option value="whitelist">白名单策略</Option>
+                <Option value="blacklist">黑名单策略</Option>
               </Select>
             </FormItem>
 
-            {strategyType === "login" &&
             <FormItem
               {...formItemLayout}
-              label={"封禁源IP"}
+              label={"策略级别"}
+              name="level"
+              initialValue={level}
+              rules={[
+                {
+                  required: true,
+                  message: "策略类型不能为空",
+                },
+              ]}
+            >
+              <Select placeholder="请选择策略级别" onChange={(selectValue)=>{setLevel(selectValue as string)}}>
+                <Option value="1">一级</Option>
+                <Option value="2">二级</Option>
+                <Option value="3">三级</Option>
+              </Select>
+            </FormItem>
+
+            <FormItem
+              {...formItemLayout}
+              label={"源IP"}
               name="sourceIp"
               help={"请输入单个IP,CIDR表达式IP,IP段,A段B段C段IP.IP表达式之间用分号分割,如:192.168.1.1;192.168.1.2。如不会填写可通过添加IP按钮进行IP添加。"}
             >
@@ -246,7 +253,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
                 <Col span={20}>
                   <TextArea
                     style={{ minHeight: 32 }}
-                    placeholder={"请输入封禁源IP"}
+                    placeholder={"请输入源IP"}
                     rows={8}
                     value={sourceIpContent}
                     onChange={(e)=>{setSourceIpContent(e.target.value)}}
@@ -258,11 +265,10 @@ const BasicForm: FC<BasicFormProps> = (props) => {
                 </Col>
               </Row>
             </FormItem>
-            }
 
             <FormItem
               {...formItemLayout}
-              label={"封禁目的IP"}
+              label={"目的IP"}
               name="destIp"
               help={"请输入单个IP,CIDR表达式IP,IP段,A段B段C段IP.IP表达式之间用分号分割,如:192.168.1.1;192.168.1.2。如不会填写可通过添加IP按钮进行IP添加。"}
             >
@@ -270,7 +276,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
                 <Col span={20}>
                   <TextArea
                     style={{ minHeight: 32 }}
-                    placeholder={"请输入封禁目的IP"}
+                    placeholder={"请输入目的IP"}
                     rows={8}
                     value={destIpContent}
                     onChange={(e)=>{setDestIpContent(e.target.value)}}
@@ -283,22 +289,36 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               </Row>
             </FormItem>
 
+            {Number(level)>=2 &&
+              <FormItem
+                {...formItemLayout}
+                label={"帐号"}
+                name="user"
+                help="帐号之间用分号分割 如:root;sys;admin;oracle"
+              >
+                <TextArea
+                  style={{ minHeight: 32 }}
+                  placeholder={"请输入登录帐号,帐号之间用分号分割 如:root;sys;admin;oracle"}
+                  rows={8}
+                />
+              </FormItem>
+            }
+
+            {Number(level)>=3 &&
             <FormItem
               {...formItemLayout}
-              label={"封禁帐号"}
-              name="users"
+              label={"正则命令"}
+              name="command"
+              help={"由于正则表达式的特殊性,请使用添加按钮进行封禁命令添加"}
             >
-              <TextArea
-                style={{ minHeight: 32 }}
-                placeholder={"请输入封禁帐号,帐号之间用分号分割 如:root;sys;admin;oracle"}
-                rows={8}
-              />
+              <RegTableForm/>
             </FormItem>
+            }
 
             <FormItem
               {...formItemLayout}
-              label={"封禁时间"}
-              name="timeRange"
+              label={"生效时间"}
+              name="validTime"
             >
               <RangePicker
                 showTime
@@ -311,38 +331,10 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               />
             </FormItem>
 
-            {strategyType ==="operation" &&
-              <FormItem
-                {...formItemLayout}
-                label={"封禁命令"}
-                name="commond"
-                help={"由于正则表达式的特殊性,请使用添加按钮进行封禁命令添加"}
-              >
-                <RegTableForm/>
-              </FormItem>
-            }
-
             <Form.Item {...formItemLayout}
               name="enable" label="是否启用" valuePropName="checked" initialValue={true} >
               <Switch  checkedChildren={'启用'} unCheckedChildren={'禁用'} />
             </Form.Item>
-
-            <Form.Item {...formItemLayout}
-              name="action" label="策略动作">
-              <Checkbox.Group  onChange={(checkedValue)=>{}}>
-                <Row>
-                  <Col span={20}>
-                    <Checkbox value="warning"  style={{ lineHeight: '32px' }}>告警</Checkbox>
-                  </Col>
-
-                  <Col span={20}>
-                    <Checkbox value="block" style={{ lineHeight: '32px' }}>阻断</Checkbox>
-                  </Col>
-                </Row>
-              </Checkbox.Group>
-            </Form.Item>
-
-
 
             <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
               <Button type="primary" htmlType="submit" loading={submitting}>

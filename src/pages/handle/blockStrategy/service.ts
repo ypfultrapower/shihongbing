@@ -1,4 +1,3 @@
-//查询
 import {TableListParams} from "@/common/data/commondata";
 import http from "@/utils/http";
 import request from "umi-request";

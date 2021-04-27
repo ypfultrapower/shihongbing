@@ -1,7 +1,25 @@
 import {ProColumns} from "@ant-design/pro-table";
 import {StrategyTableListItem} from "@/pages/handle/blockStrategy/data";
 
-export const loginTypeDeailColumns: ProColumns<StrategyTableListItem>[] =[
+export const firstDeailColumns: ProColumns<StrategyTableListItem>[] =[
+  {
+    title: '源IP',
+    dataIndex: 'sourceIp',
+    key:'sourceIp'
+  },
+  {
+    title: '目的IP',
+    dataIndex: 'destIp',
+    key:'destIp'
+  },
+  {
+    title: '生效时间',
+    dataIndex: 'validTime',
+    key:'validTime'
+  },
+];
+
+export const secondDeailColumns: ProColumns<StrategyTableListItem>[] =[
   {
     title: '源IP',
     dataIndex: 'sourceIp',
@@ -14,17 +32,22 @@ export const loginTypeDeailColumns: ProColumns<StrategyTableListItem>[] =[
   },
   {
     title: '账号',
-    dataIndex: 'users',
-    key:'users'
+    dataIndex: 'user',
+    key:'user'
   },
   {
-    title: '封禁时间',
-    dataIndex: 'timeRange',
-    key:'timeRange'
-  }
+    title: '生效时间',
+    dataIndex: 'validTime',
+    key:'validTime'
+  },
 ];
 
-export const operationTypeDeailColumns: ProColumns<StrategyTableListItem>[] =[
+export const thirdDeailColumns: ProColumns<StrategyTableListItem>[] =[
+  {
+    title: '源IP',
+    dataIndex: 'sourceIp',
+    key:'sourceIp'
+  },
   {
     title: '目的IP',
     dataIndex: 'destIp',
@@ -32,17 +55,17 @@ export const operationTypeDeailColumns: ProColumns<StrategyTableListItem>[] =[
   },
   {
     title: '账号',
-    dataIndex: 'users',
-    key:'users'
-  },
-  {
-    title: '封禁时间',
-    dataIndex: 'timeRange',
-    key:'timeRange'
+    dataIndex: 'user',
+    key:'user'
   },
   {
     title: '命令',
-    dataIndex: 'commond',
-    key:'commond'
+    dataIndex: 'command',
+    key:'command'
+  },
+  {
+    title: '封禁时间',
+    dataIndex: 'validTime',
+    key:'validTime'
   }
 ];
