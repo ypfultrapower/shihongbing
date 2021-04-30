@@ -144,6 +144,11 @@ export default defineConfig({
                   name: 'blockedSession',
                   path: '/behavior/blockedSession',
                   component: './behavior/blockedSession',
+                },
+                {
+                  name: 'schedule',
+                  path: '/behavior/schedule',
+                  component: './behavior/schedule',
                 }
               ],
             },
