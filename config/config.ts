@@ -129,29 +129,34 @@ export default defineConfig({
             },
             {
               path: '/behavior',
-              name: '行为管理',
+              name: 'behavior',
               routes: [
                 {
                   path: '/behavior',
                   redirect: '/behavior/session',
                 },
                 {
-                  name: '会话管理',
+                  name: 'session',
                   path: '/behavior/session',
                   component: './behavior/session',
+                },
+                {
+                  name: 'blockedSession',
+                  path: '/behavior/blockedSession',
+                  component: './behavior/blockedSession',
                 }
               ],
             },
             {
               path: '/fort',
-              name: '堡垒机管理',
+              name: 'fort',
               routes: [
                 {
                   path: '/fort',
                   redirect: '/fort/fortlist',
                 },
                 {
-                  name: '堡垒清单',
+                  name: 'fortlist',
                   path: '/fort/fortlist',
                   component: './fort/fortlist',
                 }
@@ -159,24 +164,24 @@ export default defineConfig({
             },
             {
               path: '/handle',
-              name: '处置管理',
+              name: 'handle',
               routes: [
                 {
                   path: '/handle',
                   redirect: '/handle/blockStrategy',
                 },
                 {
-                  name: '阻断策略管理',
+                  name: 'blockStrategy',
                   path: '/handle/blockStrategy',
                   component: './handle/blockStrategy',
                 },
                 {
-                  name: '阻断策略编辑',
+                  name: 'blockStrategyEdit',
                   path: '/handle/blockStrategy/edit',
                   component: './handle/blockStrategy/edit',
                 },
                 {
-                  name: '阻断白名单',
+                  name: 'whitelist',
                   path: '/handle/whitelist',
                   component: './handle/whitelist',
                   routes: [
@@ -223,22 +228,17 @@ export default defineConfig({
             },
 
             {
-              path: '/userManage',
-              name: 'userManage',
+              path: '/warning',
+              name: 'warning',
               routes: [
                 {
-                  path: '/userManage',
-                  redirect: '/userManage/userInfo',
+                  path: '/warning',
+                  redirect: '/warning/blockWarning',
                 },
                 {
-                  name: 'userInfo',
-                  path: '/userManage/userInfo',
-                  component: './userManage/userInfo',
-                },
-                {
-                  name: 'userGroup',
-                  path: '/userManage/userGroup',
-                  component: './userManage/userGroup',
+                  name: 'blockWarning',
+                  path: '/warning/blockWarning',
+                  component: './warning/blockWarning',
                 }
               ],
             },
