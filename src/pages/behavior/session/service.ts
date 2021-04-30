@@ -7,8 +7,8 @@ export async function querySession(params?: TableListParams) {
   return http.json('/api/session/page', params);
 }
 //获取会话内容
-export async function getRecordContent(sessionId: string | undefined) {
-  return http.get('/api/session/record/'+sessionId);
+export async function getRecordContent(uniqueCode: string | undefined) {
+  return http.get('/api/session/record/'+uniqueCode);
 }
 //阻断会话
 export async function blockSession(sessionId: string ) {
@@ -17,11 +17,7 @@ export async function blockSession(sessionId: string ) {
 
 //已阻断会话查询
 export async function queryBlockedSession(params?: any) {
-  let closeTypeArray: string[] = new Array();
-  closeTypeArray.push("userBlock");
-  closeTypeArray.push("agentBlock");
-  params.closeType = closeTypeArray;
-  return http.json('/api/session/page', params);
+  return http.json('/api/blockEvent/page', params);
 }
 
 export async function batchDeleteSession(params: any) {

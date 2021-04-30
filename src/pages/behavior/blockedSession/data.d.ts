@@ -1,8 +1,13 @@
 import {BaseTableListItem} from "@/common/data/commondata";
 import {BlockWarningItem} from "@/pages/warning/blockWarning/data";
+import {SessionTableListItem} from "@/pages/behavior/session/data";
 
-export interface SessionTableListItem extends BaseTableListItem{
+export interface BlockEventItem extends BaseTableListItem{
   key: string;
+  reason: string;
+  type: string;
+  blockedByWho: string;
+  time: string;
   assetIp: string;
   agentId: string;
   user: string;
@@ -13,11 +18,9 @@ export interface SessionTableListItem extends BaseTableListItem{
   sourceIp: string;
   destIp: string;
   detour: string;
-  fileName: string;
+  sessionType:string;
   assetGroupName:string;
-  closeType:string;
   uniqueCode: string;
-  warnings: Partial<BlockWarningItem[]>
 }
 
 

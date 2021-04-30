@@ -21,8 +21,8 @@ const DetailModal: React.FC<DetailModalProps> = (props) => {
            footer={[
              <Button key="cancel" type="primary" onClick={onCancel}>关闭</Button>]}>
       <Card type="inner" >
-        <Descriptions style={{ marginBottom: 16 }} title="Agent信息">
-          <Descriptions.Item label="Agent编号">{currentItem.agentId}</Descriptions.Item>
+        <Descriptions style={{ marginBottom: 16 }} title="资产信息">
+          <Descriptions.Item label="资产IP">{currentItem.assetIp}</Descriptions.Item>
           <Descriptions.Item label="资产部门">{currentItem.assetGroupName}</Descriptions.Item>
         </Descriptions>
         <Divider style={{ margin: '16px 0' }} />

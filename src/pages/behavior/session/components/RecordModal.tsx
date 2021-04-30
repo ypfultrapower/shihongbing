@@ -18,7 +18,7 @@ const RecordModal: React.FC<RecordModalProps> = (props) => {
   const [content, setContent] = React.useState<string>("");
   const [timer, setTimer] = React.useState<NodeJS.Timeout>();
   function recordContentFun(currentItem: Partial<SessionTableListItem>){
-    getRecordContent(currentItem.id).then((response)=>{
+    getRecordContent(currentItem.uniqueCode).then((response)=>{
       setContent(response.data);
     }).catch((error)=>{
       message.error(`加载行为日志异常:${error}`)
@@ -46,7 +46,7 @@ const RecordModal: React.FC<RecordModalProps> = (props) => {
   }, [refreshInterval]);
 
   useEffect(() => {
-    if(currentItem && currentItem.sessionType === "online"){
+    if(currentItem && currentItem.sessionType === "online" && visible){
       recordContentFun(currentItem);
       setTimer(setInterval(() => {
         recordContentFun(currentItem);

@@ -7,6 +7,7 @@ import {queryBlockedSession} from "@/pages/behavior/session/service";
 import DetailModal from "@/pages/behavior/session/components/DetailModal";
 import RecordModal from "@/pages/behavior/session/components/RecordModal";
 import moment from "moment";
+import {BlockEventItem} from "@/pages/behavior/blockedSession/data";
 
 
 const TableList: React.FC<{}> = () => {
@@ -14,24 +15,29 @@ const TableList: React.FC<{}> = () => {
   const [detailModalVisible,setDetailModalVisible]  = useState<boolean>(false);
   const [recordModalVisible,setRecordModalVisible]  = useState<boolean>(false);
   const [currentItem, setCurrentItem] = useState<Partial<SessionTableListItem> | undefined>(undefined);
-  const detailColumns: ProColumns<SessionTableListItem>[] =[
+  const detailColumns: ProColumns<BlockEventItem>[] =[
     {
-      title: '资产部门',
-      dataIndex: 'assetGroupName',
-      key:'assetGroupName'
+      title: '阻断时间',
+      dataIndex: 'time',
+      key:'time',
     },
     {
-      title: '会话文件名',
-      dataIndex: 'fileName',
-      key:'fileName'
+      title: '阻断人/阻断agent',
+      dataIndex: 'blockedByWho',
+      key:'blockedByWho',
     },
     {
-      title: '会话文件路径',
-      dataIndex: 'filePath',
-      key:'filePath'
+      title: '阻断原因',
+      dataIndex: 'reason',
+      key:'reason',
     }
   ];
-  const columns:ProColumns<SessionTableListItem>[] = [
+  const columns:ProColumns<BlockEventItem>[] = [
+    {
+      title: '资产IP',
+      dataIndex: 'assetIp',
+      key:'assetIp'
+    },
     {
       title: '登录账号',
       dataIndex: 'user',
@@ -56,16 +62,22 @@ const TableList: React.FC<{}> = () => {
       title: '开始时间',
       dataIndex: 'startTime',
       key:'startTime',
-      hideInSearch:true,
+      valueType: 'dateTime',
       sorter: (a,b)=>{
-        return moment(a.startTime, 'YYYYMMDDHHmmss').toDate().getTime() - moment(b.startTime, "YYYYMMDDHHmmss").toDate().getTime()
-      }
+        return moment(a.startTime, 'YYYY-MM-DD HH:mm:ss').toDate().getTime() - moment(b.startTime, "YYYY-MM-DD HH:mm:ss").toDate().getTime()
+      },
     },
     {
       title: '结束时间',
       dataIndex: 'endTime',
       key:'endTime',
-      hideInSearch:true,
+      valueType: 'dateTime',
+    },
+    {
+      title: '阻断时间',
+      dataIndex: 'time',
+      key:'time',
+      hideInSearch:true
     },
     {
       title: '是否绕行',
@@ -76,36 +88,16 @@ const TableList: React.FC<{}> = () => {
       }
     },
     {
-      title: '阻断类型',
-      dataIndex: 'closeType',
+      title: '阻断来源',
+      dataIndex: 'type',
       valueEnum: {
-        'userBlock': {text: '用户阻断', status: 'Success'},
-        'agentBlock': {text: 'agent阻断', status: 'Error'}
+        'user': {text: '用户阻断', status: 'Success'},
+        'strategy': {text: '策略阻断', status: 'Warning'},
+        'analysis':{text: '行为分析阻断', status: 'Error'},
       }
     },
     {
-      title: '阻断人/阻断agent',
-      dataIndex: 'blockedByWho',
-      key:'blockedByWho',
-    },
-    {
-      title: '关联告警',
-      dataIndex: 'relWarning',
-      valueType: 'option',
-      render:(_, record)=>{
-        return (
-          <a
-            onClick={() =>{
-              //editAndDelete("edit",record)
-            }}
-          >
-            查看告警
-          </a>
-        )
-      }
-    },
-    {
-      title: '行为日志',
+      title: '会话详情',
       dataIndex: 'record',
       valueType: 'option',
       render: (_, record) =>{
@@ -116,12 +108,12 @@ const TableList: React.FC<{}> = () => {
     }
   ];
 
-  const showDetailModal = (item: SessionTableListItem) =>{
+  const showDetailModal = (item: BlockEventItem) =>{
     setDetailModalVisible(true);
     setCurrentItem(item);
   }
-  const expandableRender = (record: SessionTableListItem)=>{
-    return <Card title="其他详细信息" bordered={false} headStyle={{backgroundColor:"lightskyblue"}} bodyStyle={{backgroundColor:"#e9e9e9"}}>
+  const expandableRender = (record: BlockEventItem)=>{
+    return <Card title="阻断详情" bordered={false} headStyle={{backgroundColor:"lightskyblue"}} bodyStyle={{backgroundColor:"#e9e9e9"}}>
       {detailColumns.map(value => (
         <p><strong>{value.title}: </strong>{record[value.dataIndex as string]}</p>
       ))}
@@ -130,7 +122,7 @@ const TableList: React.FC<{}> = () => {
   return (
     <div>
       <PageHeaderWrapper>
-        <ProTable<SessionTableListItem>
+        <ProTable<BlockEventItem>
           headerTitle="阻断会话列表"
           rowClassName={((record, index) => {
             let className = "light-row";

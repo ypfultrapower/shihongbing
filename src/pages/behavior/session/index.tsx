@@ -17,6 +17,11 @@ const TableList: React.FC<{}> = () => {
   const [currentItem, setCurrentItem] = useState<Partial<SessionTableListItem> | undefined>(undefined);
   const detailColumns: ProColumns<SessionTableListItem>[] =[
     {
+      title: '资产IP',
+      dataIndex: 'assetIp',
+      key:'assetIp'
+    },
+    {
       title: '资产部门',
       dataIndex: 'assetGroupName',
       key:'assetGroupName'
@@ -25,11 +30,6 @@ const TableList: React.FC<{}> = () => {
       title: '会话文件名',
       dataIndex: 'fileName',
       key:'fileName'
-    },
-    {
-      title: '会话文件路径',
-      dataIndex: 'filePath',
-      key:'filePath'
     }
   ];
   const columns:ProColumns<SessionTableListItem>[] = [
