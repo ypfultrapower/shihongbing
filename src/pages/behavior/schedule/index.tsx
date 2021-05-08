@@ -1,15 +1,17 @@
 import React, {useRef, useState} from "react";
 import ProTable, {ActionType, ProColumns} from "@ant-design/pro-table";
 import {PageHeaderWrapper} from "@ant-design/pro-layout";
-import DetailModal from "@/pages/behavior/session/components/DetailModal";
 import moment from "moment";
 import {ScheduleItem} from "@/pages/behavior/schedule/data";
 import {querySchedule} from "@/pages/behavior/schedule/service";
+import DetailModal from "@/pages/behavior/schedule/components/DetailModal";
+import ChangeLogModal from "@/pages/behavior/schedule/components/ChangelogModal";
 
 
 const TableList: React.FC<{}> = () => {
   const actionRef = useRef<ActionType>();
   const [detailModalVisible,setDetailModalVisible]  = useState<boolean>(false);
+  const [logModalVisible,setLogModalVisible]  = useState<boolean>(false);
   const [currentItem, setCurrentItem] = useState<Partial<ScheduleItem> | undefined>(undefined);
   const columns:ProColumns<ScheduleItem>[] = [
     {
@@ -26,6 +28,10 @@ const TableList: React.FC<{}> = () => {
       title: '计划内容',
       dataIndex: 'content',
       key:'content',
+      width:'40%',
+      render:(_, record)=>{
+        return <span style={{whiteSpace:"pre-line"}}>{record.content}</span>
+      }
     },
     {
       title: '变更时间',
@@ -42,7 +48,8 @@ const TableList: React.FC<{}> = () => {
       valueType: 'option',
       render: (_, record) =>{
         return (<a onClick={() =>{
-
+            setCurrentItem(record);
+            setLogModalVisible(true);
           }}>查看变更记录</a>)
       }
     }
@@ -82,6 +89,14 @@ const TableList: React.FC<{}> = () => {
                      setDetailModalVisible(false)
                      setCurrentItem(undefined)}}>
       </DetailModal>
+
+      {/*变更信息modal框*/}
+      <ChangeLogModal visible={logModalVisible}
+                   currentItem={currentItem?currentItem:{}}
+                   onCancel={()=>{
+                     setLogModalVisible(false)
+                     setCurrentItem(undefined)}}>
+      </ChangeLogModal>
     </div>
   );
 }

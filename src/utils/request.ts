@@ -51,7 +51,10 @@ const request = extend({
 // request拦截器, 改变url 或 options.
 request.interceptors.request.use((url, options)  => {
   //除了认证获取token请求都需要带上Authorization请求头
-  if(url.indexOf("/auth/password")===-1 && url.indexOf("/auth/sms")===-1 && url.indexOf("/auth/captcha")===-1){
+  if(url.indexOf("/auth/password")===-1
+    && url.indexOf("/auth/sms")===-1
+    && url.indexOf("/auth/captcha")===-1
+    && url.indexOf("/getAesKey")===-1){
     options.headers = {
       'Authorization': "Bearer "+ localStorage.getItem("access_token"),
       ...options.headers

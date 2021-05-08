@@ -21,6 +21,10 @@ export async function smsLogin(params: LoginParamsType) {
   return http.json('/api/auth/sms',params);
 }
 
+export async function getAesKey() {
+  return http.get('/api/getAesKey');
+}
+
 //http://192.168.1.48/foo/api
 export async function getFakeCaptcha(mobile: string) {
   return request(`/api/login/captcha?mobile=${mobile}`);

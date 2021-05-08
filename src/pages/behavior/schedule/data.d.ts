@@ -8,4 +8,11 @@ export interface ScheduleItem extends BaseTableListItem{
   modifyDate: string;
 }
 
+export interface ScheduleChangeLog extends BaseTableListItem{
+  key: string;
+  changeBefore: string;
+  changeTo: string;
+  changeTo: string;
+}
+
 

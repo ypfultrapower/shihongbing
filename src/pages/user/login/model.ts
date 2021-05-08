@@ -1,7 +1,7 @@
 import { Effect, history, Reducer } from 'umi';
 import { message, notification } from 'antd';
 import { parse } from 'qs';
-import { passwordAndCaptchLogin,smsLogin,getFakeCaptcha } from './service';
+import {passwordAndCaptchLogin, smsLogin, getFakeCaptcha, getAesKey} from './service';
 export function getPageQuery() {
   return parse(window.location.href.split('?')[1]);
 }
@@ -19,6 +19,7 @@ export interface ModelType {
   effects: {
     login: Effect;
     getCaptcha: Effect;
+    getAesKeyAndIv: Effect;
   };
   reducers: {
     changeLoginStatus: Reducer<StateType>;
@@ -64,9 +65,12 @@ const Model: ModelType = {
         });
       }
     },
-
     *getCaptcha({ payload }, { call }) {
       yield call(getFakeCaptcha, payload);
+    },
+    *getAesKeyAndIv({ payload,callback }, { call, put }) {
+      const response = yield call(getAesKey, payload); // post
+      callback(response);
     },
   },
 

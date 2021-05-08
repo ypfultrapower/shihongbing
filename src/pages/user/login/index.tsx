@@ -1,11 +1,13 @@
-import { Alert, Checkbox } from 'antd';
-import React, { useState } from 'react';
+import {Alert, Checkbox} from 'antd';
+import React, {useEffect, useState} from 'react';
 import { Dispatch, connect } from 'umi';
 import { StateType } from './model';
 import styles from './style.less';
-import { LoginParamsType } from './service';
+import {LoginParamsType} from './service';
 import LoginFrom from './components/Login';
 import { CLIENT_ID, CLIENT_SECRET } from '../../../../config/systemConfig';
+import {aesEncrypt} from "@/utils/encript";
+
 const { Tab, UserName, Password, Mobile, Captcha, ImgCaptcha,Submit } = LoginFrom;
 interface LoginProps {
   dispatch: Dispatch;
@@ -27,19 +29,36 @@ const LoginMessage: React.FC<{
 );
 
 const Login: React.FC<LoginProps> = (props) => {
-  const { userAndlogin = {}, submitting } = props;
+  const { userAndlogin = {}, submitting,dispatch } = props;
   const { status, type: grant_type } = userAndlogin;
   const [autoLogin, setAutoLogin] = useState(true);
   const [type, setType] = useState<string>('password');
+  const [aesKey, setAesKey] = useState<string>('');
+  const [aesIv, setAesIv] = useState<string>('');
+
+  useEffect(() => {
+    dispatch({
+      type: 'userAndlogin/getAesKeyAndIv',
+      callback:(res:any)=>{
+        if(res.success){
+          setAesIv(res.data.aesIV);
+          setAesKey(res.data.aesKey)
+        }
+      }
+    });
+  }, []);
 
   //登录
   const handleSubmit = (values: LoginParamsType) => {
-    const { dispatch } = props;
     //后台使用oauth2实现的token，需要配置额外的认证参数
-    let authParams:{} = {client_id:CLIENT_ID,client_secret:CLIENT_SECRET};
+    let authParams:{} = {client_id:CLIENT_ID,client_secret:aesEncrypt(CLIENT_SECRET,aesKey,aesIv)};
     //认证参数转换
     for (let valuesKey in values) {
-      authParams[valuesKey] = values[valuesKey];
+      if(valuesKey === "password"){
+        authParams[valuesKey] = aesEncrypt(values[valuesKey],aesKey,aesIv);
+      }else{
+        authParams[valuesKey] = values[valuesKey];
+      }
     }
     dispatch({
       type: 'userAndlogin/login',
