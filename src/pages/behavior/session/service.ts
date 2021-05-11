@@ -7,8 +7,8 @@ export async function querySession(params?: TableListParams) {
   return http.json('/api/session/page', params);
 }
 //获取会话内容
-export async function getRecordContent(uniqueCode: string | undefined) {
-  return http.get('/api/session/record/'+uniqueCode);
+export async function getRecordContent(params?: any) {
+  return http.json('/api/session/readRecord',params);
 }
 //阻断会话
 export async function blockSession(sessionId: string ) {

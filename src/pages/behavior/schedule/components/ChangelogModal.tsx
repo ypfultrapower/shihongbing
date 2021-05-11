@@ -35,7 +35,6 @@ const ChangeLogModal: React.FC<ModalProps> = (props) => {
       key:'changeDate',
       valueType: 'dateTime',
     }];
-
   return(
     <Modal title="计划任务变更信息"
            width={1000}

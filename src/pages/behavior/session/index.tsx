@@ -39,6 +39,12 @@ const TableList: React.FC<{}> = () => {
       key:'assetIp'
     },
     {
+      title: '关键字',
+      dataIndex: 'content',
+      key:'content',
+      hideInTable:true
+    },
+    {
       title: '登录账号',
       dataIndex: 'user',
       key:'user',
@@ -52,7 +58,7 @@ const TableList: React.FC<{}> = () => {
     {
       title: '源Ip',
       dataIndex: 'sourceIp',
-      key:'sourceIp',
+      key:'sourceIp'
     },
     {
       title: '目的Ip',
