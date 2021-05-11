@@ -1,9 +1,9 @@
 import {Alert, Checkbox} from 'antd';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import { Dispatch, connect } from 'umi';
 import { StateType } from './model';
 import styles from './style.less';
-import {LoginParamsType} from './service';
+import {getAesKey, LoginParamsType} from './service';
 import LoginFrom from './components/Login';
 import { CLIENT_ID, CLIENT_SECRET } from '../../../../config/systemConfig';
 import {aesEncrypt} from "@/utils/encript";
@@ -36,17 +36,17 @@ const Login: React.FC<LoginProps> = (props) => {
   const [aesKey, setAesKey] = useState<string>('');
   const [aesIv, setAesIv] = useState<string>('');
 
-  useEffect(() => {
-    dispatch({
-      type: 'userAndlogin/getAesKeyAndIv',
-      callback:(res:any)=>{
-        if(res.success){
-          setAesIv(res.data.aesIV);
-          setAesKey(res.data.aesKey)
-        }
+  const fetchAesKeyAndIvFn = useCallback(()=>{
+    getAesKey().then(res=>{
+      if(res.success){
+        setAesIv(res.data.aesIV);
+        setAesKey(res.data.aesKey)
       }
-    });
-  }, []);
+    })
+  },[]);
+  useEffect(() => {
+    fetchAesKeyAndIvFn()
+  }, [localStorage.getItem("access_token")]);
 
   //登录
   const handleSubmit = (values: LoginParamsType) => {
