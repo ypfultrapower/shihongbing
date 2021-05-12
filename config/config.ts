@@ -253,7 +253,7 @@ export default defineConfig({
               routes: [
                 {
                   path: '/authorization',
-                  redirect: '/authorization/menu',
+                  redirect: '/authorization/user',
                 },
                 {
                   name: 'menu',
@@ -264,6 +264,11 @@ export default defineConfig({
                   name: 'role',
                   path: '/authorization/role',
                   component: './authorization/role',
+                },
+                {
+                  name: 'user',
+                  path: '/authorization/user',
+                  component: './authorization/user',
                 }
               ],
             },
