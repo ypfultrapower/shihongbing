@@ -16,7 +16,7 @@ export interface SessionTableListItem extends BaseTableListItem{
   fileName: string;
   assetGroupName:string;
   closeType:string;
-  uniqueCode: string;
+  sessionId:string;
   warnings: Partial<BlockWarningItem[]>
 }
 

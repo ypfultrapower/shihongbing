@@ -1,11 +1,11 @@
 import {Alert, Checkbox} from 'antd';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import { Dispatch, connect } from 'umi';
 import { StateType } from './model';
 import styles from './style.less';
-import {getAesKey, LoginParamsType} from './service';
+import {LoginParamsType} from './service';
 import LoginFrom from './components/Login';
-import { CLIENT_ID, CLIENT_SECRET } from '../../../../config/systemConfig';
+import {AES_IV, AES_KEY, CLIENT_ID, CLIENT_SECRET} from '../../../../config/systemConfig';
 import {aesEncrypt} from "@/utils/encript";
 
 const { Tab, UserName, Password, Mobile, Captcha, ImgCaptcha,Submit } = LoginFrom;
@@ -33,29 +33,27 @@ const Login: React.FC<LoginProps> = (props) => {
   const { status, type: grant_type } = userAndlogin;
   const [autoLogin, setAutoLogin] = useState(true);
   const [type, setType] = useState<string>('password');
-  const [aesKey, setAesKey] = useState<string>('');
-  const [aesIv, setAesIv] = useState<string>('');
 
-  const fetchAesKeyAndIvFn = useCallback(()=>{
-    getAesKey().then(res=>{
-      if(res.success){
-        setAesIv(res.data.aesIV);
-        setAesKey(res.data.aesKey)
-      }
-    })
-  },[]);
-  useEffect(() => {
-    fetchAesKeyAndIvFn()
-  }, [localStorage.getItem("access_token")]);
+  // const fetchAesKeyAndIvFn = useCallback(()=>{
+  //   getAesKey().then(res=>{
+  //     if(res.success){
+  //       setAesIv(res.data.aesIV);
+  //       setAesKey(res.data.aesKey)
+  //     }
+  //   })
+  // },[]);
+  // useEffect(() => {
+  //   fetchAesKeyAndIvFn()
+  // }, [localStorage.getItem("access_token")]);
 
   //登录
   const handleSubmit = (values: LoginParamsType) => {
     //后台使用oauth2实现的token，需要配置额外的认证参数
-    let authParams:{} = {client_id:CLIENT_ID,client_secret:aesEncrypt(CLIENT_SECRET,aesKey,aesIv)};
+    let authParams:{} = {client_id:CLIENT_ID,client_secret:aesEncrypt(CLIENT_SECRET,AES_KEY,AES_IV)};
     //认证参数转换
     for (let valuesKey in values) {
       if(valuesKey === "password"){
-        authParams[valuesKey] = aesEncrypt(values[valuesKey],aesKey,aesIv);
+        authParams[valuesKey] = aesEncrypt(values[valuesKey],AES_KEY,AES_IV);
       }else{
         authParams[valuesKey] = values[valuesKey];
       }

@@ -18,8 +18,8 @@ const RecordModal: React.FC<RecordModalProps> = (props) => {
   const [content, setContent] = React.useState<string>("");
   const [total, setTotal] = React.useState<number>(0);
   const [timer, setTimer] = React.useState<NodeJS.Timeout>();
-  function recordContentFun(uniqueCode?:string,current:number=1,pageSize:number=50){
-    let params = {uniqueCode:uniqueCode,current:current,pageSize:pageSize}
+  function recordContentFun(sessionId?:string,current:number=1,pageSize:number=50){
+    let params = {sessionId:sessionId,current:current,pageSize:pageSize}
     getRecordContent(params).then((response)=>{
       setContent(response.data.content);
       setTotal(response.data.total)
@@ -44,19 +44,19 @@ const RecordModal: React.FC<RecordModalProps> = (props) => {
     }
     if(currentItem && currentItem.sessionType === "online"){
       setTimer(setInterval(() => {
-        recordContentFun(currentItem.uniqueCode);
+        recordContentFun(currentItem.id);
       }, 1000*refreshInterval))
     }
   }, [refreshInterval]);
 
   useEffect(() => {
     if(currentItem && currentItem.sessionType === "online" && visible){
-      recordContentFun(currentItem.uniqueCode);
+      recordContentFun(currentItem.id);
       setTimer(setInterval(() => {
-        recordContentFun(currentItem.uniqueCode);
+        recordContentFun(currentItem.id);
       }, 1000*refreshInterval))
     }else if(currentItem && currentItem.sessionType === "history"){
-      recordContentFun(currentItem.uniqueCode);
+      recordContentFun(currentItem.id);
     }
   }, [props.currentItem]);
   function itemRender(current:number, type:string, originalElement:any) {
@@ -93,7 +93,7 @@ const RecordModal: React.FC<RecordModalProps> = (props) => {
           <Pagination total={total} itemRender={itemRender}
                       defaultPageSize={50}
                       showTotal={total => `共 ${total} 条`} onChange={(page, pageSize)=>{
-                        recordContentFun(currentItem.uniqueCode,page,pageSize)}}/>
+                        recordContentFun(currentItem.id,page,pageSize)}}/>
         </Card>
       </GridContent>
 

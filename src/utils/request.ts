@@ -73,8 +73,8 @@ request.interceptors.request.use((url, options)  => {
 });
 // response拦截器, 处理response
 request.interceptors.response.use(async response => {
-  if(response.headers.get("Content-Type") =='application/octet-stream'){
-    return response.blob();
+  if(response.headers.get("Content-Type") =='application/octet-stream;charset=UTF-8'){
+    return response;
   }
   const data = await response.clone().json();
   //远程跨域请求,远程服务restful api接口返回统一的success参数,表示请求成功还是失败

@@ -20,7 +20,7 @@ export interface BlockEventItem extends BaseTableListItem{
   detour: string;
   sessionType:string;
   assetGroupName:string;
-  uniqueCode: string;
+  sessionId: string;
 }
 
 

@@ -1,8 +1,8 @@
 import React, {useRef, useState} from "react";
 import ProTable, {ActionType, ProColumns} from "@ant-design/pro-table";
-import {Button, Card, Divider, Dropdown, Menu, message, Modal} from "antd";
+import {Button, Card, Divider, Dropdown, Menu, message, Modal,Upload} from "antd";
 import {AgentTableListItem} from "@/pages/agent/data";
-import {DownOutlined, PlusOutlined} from "@ant-design/icons";
+import {DownloadOutlined, DownOutlined, PlusOutlined, UploadOutlined} from "@ant-design/icons";
 import {PageHeaderWrapper} from "@ant-design/pro-layout";
 import {
   addAgent,
@@ -15,6 +15,9 @@ import {
 import DetailModal from "@/pages/agent/access/components/DetailModal";
 import OperationModal from "@/pages/agent/access/components/OperationModal";
 import moment from "moment";
+import request from "@/utils/request";
+import {RcFile, UploadChangeParam} from "antd/es/upload";
+import {UploadFile} from "antd/es/upload/interface";
 
 
 const TableList: React.FC<{}> = () => {
@@ -22,6 +25,10 @@ const TableList: React.FC<{}> = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [detailModalVisible,setDetailModalVisible]  = useState<boolean>(false);
   const [currentItem, setCurrentItem] = useState<Partial<AgentTableListItem> | undefined>(undefined);
+  const [uploadModalVisible,setUploadModalVisible] = useState(false);
+  const [fileList,setFileList] = useState<any[]>([])
+  const [upFiles,setUpFiles] = useState<any[]>([])
+
   const detailColumns: ProColumns<AgentTableListItem>[] =[
     {
       title: '创建时间',
@@ -245,6 +252,63 @@ const TableList: React.FC<{}> = () => {
     });
   };
 
+  //批量导入模板下载
+  const downLoadTemplate = () =>{
+    request(`/api/agent/downloadExcelTemplate`, {
+      method: 'GET', // GET / POST 均可以
+      responseType:'blob',
+      credentials: 'include'
+    }).then((response)=>{
+      const aLink = document.createElement('a');
+      document.body.appendChild(aLink);
+      aLink.style.display='none';
+      let url = URL.createObjectURL(new Blob([response]));
+      aLink.href = url;
+      aLink.download = "agent批量导入模板.xlsx";
+      aLink.click();
+      document.body.removeChild(aLink);
+      URL.revokeObjectURL(url);
+    }).catch((error)=>{
+      console.log(error);
+    })
+  }
+
+  //上传文件
+  const upload = ()=>{
+    const formData = new FormData();
+    if(upFiles.length==0){
+      message.info(`请选择文件!`)
+      return;
+    }
+    upFiles.forEach((file)=>{
+      formData.append(file.name,file);
+    });
+    request(`/api/agent/uploadFiles`, {
+      method: 'POST',
+      body:formData
+    }).then((response)=>{
+      setUploadModalVisible(false);
+      if(response.success){
+        message.info("批量导入成功!")
+      }else{
+        message.error(response.message,5);
+      }
+    }).catch((error)=>{
+      message.error(`批量导入失败${error}`)
+    })
+  }
+
+  const handleChange = (info:UploadChangeParam)  =>{
+    let files: UploadFile[] = [...info.fileList]
+    setFileList(files)
+  }
+
+  const beforeUpload = (file:RcFile)=>{
+    upFiles.push(file);
+    setUpFiles(upFiles);
+    return true;
+  }
+
   const showCreateFormModal = () => {
     setVisible(true);
     setCurrentItem(undefined);
@@ -356,6 +420,10 @@ const TableList: React.FC<{}> = () => {
             <Button type="primary" onClick={showCreateFormModal}>
               <PlusOutlined /> 申请AGENT
             </Button>,
+            <Button type="primary" onClick={downLoadTemplate}>
+              <DownloadOutlined /> 模板下载
+            </Button>,
+            <Button icon={<UploadOutlined />} onClick={()=>setUploadModalVisible(true)} type="primary">批量导入</Button>,
             selectedRows && selectedRows.length > 0 && (
               <Dropdown
                 overlay={
@@ -410,6 +478,29 @@ const TableList: React.FC<{}> = () => {
                      setDetailModalVisible(false);
                      setCurrentItem(undefined);}}>
       </DetailModal>
+      {/*上传文件modal modal*/}
+      <Modal title='选择上传文件' visible={uploadModalVisible} onOk={upload} onCancel={()=>{
+        setUploadModalVisible(false);
+        setUpFiles([]);
+        setFileList([]);
+      }} >
+        <Upload multiple
+                name='file'
+                accept=".xlsx"
+                fileList={fileList}
+                onChange={handleChange}
+                beforeUpload={beforeUpload}
+                progress={{
+                  strokeColor: {
+                    '0%': '#108ee9',
+                    '100%': '#87d068',
+                  },
+                  strokeWidth: 3
+                }}
+        >
+          <Button icon={<UploadOutlined />} type="primary">选择文件</Button>,
+        </Upload>,
+      </Modal>
     </div>
   );
 }

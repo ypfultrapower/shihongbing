@@ -101,6 +101,8 @@ const BasicForm: FC<BasicFormProps> = (props) => {
         let end = moment(times[1]).format('YYYY-MM-DD HH:mm:ss');
         values.validTime = start+"&"+end;
       }
+    }else{
+      values.validTime = "";
     }
     values.destIp = destIpContent
     values.sourceIp = sourceIpContent

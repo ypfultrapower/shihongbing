@@ -77,27 +77,27 @@ const OperationModal: React.FC<FormModalProps> = (props) => {
             onFinish={handleFinish}
             >
         <FormItem name="id" hidden/>
-        <FormItem
-          {...formItemLayout}
-          label='Agent编号'
-          hasFeedback={true}
-          name="agentId"
-          rules={[
-            {
-              required: true,
-              message: 'agent编号不能为空',
-            },
-          ]}
-        >
-          <Input placeholder='请输入Agent编号' />
-        </FormItem>
+        {/*<FormItem*/}
+        {/*  {...formItemLayout}*/}
+        {/*  label='Agent编号'*/}
+        {/*  hasFeedback={true}*/}
+        {/*  name="agentId"*/}
+        {/*  rules={[*/}
+        {/*    {*/}
+        {/*      required: true,*/}
+        {/*      message: 'agent编号不能为空',*/}
+        {/*    },*/}
+        {/*  ]}*/}
+        {/*>*/}
+        {/*  <Input placeholder='请输入Agent编号' />*/}
+        {/*</FormItem>*/}
 
         <FormItem
           {...formItemLayout}
           label='Agent名称'
           name="name"
         >
-          <Input placeholder='请输入Agent名称' />
+          <Input placeholder='请输入Agent名称或所在主机名称' />
         </FormItem>
 
         <FormItem
