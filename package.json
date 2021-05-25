@@ -86,7 +86,8 @@
     "semantic-ui-react": "^1.2.0",
     "umi": "^3.2.0",
     "umi-request": "^1.0.8",
-    "use-merge-value": "^1.0.1"
+    "use-merge-value": "^1.0.1",
+    "xterm": "^4.12.0"
   },
   "devDependencies": {
     "@ant-design/pro-cli": "^1.0.18",

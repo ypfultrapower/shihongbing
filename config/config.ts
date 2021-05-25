@@ -146,6 +146,11 @@ export default defineConfig({
                   component: './behavior/blockedSession',
                 },
                 {
+                  name: 'essession',
+                  path: '/behavior/essession',
+                  component: './behavior/essession',
+                },
+                {
                   name: 'schedule',
                   path: '/behavior/schedule',
                   component: './behavior/schedule',
