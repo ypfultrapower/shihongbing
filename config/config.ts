@@ -100,6 +100,12 @@ export default defineConfig({
                   path: '/dashboard/workplace',
                   component: './dashboard/workplace',
                 },
+                {
+                  name: 'webssh',
+                  icon: 'smile',
+                  path: '/dashboard/webssh',
+                  component: './dashboard/webssh',
+                }
               ],
             },
             {
