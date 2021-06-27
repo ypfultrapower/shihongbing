@@ -212,7 +212,13 @@ export default defineConfig({
                       name: 'apiAnalysis',
                       path: '/handle/analysisStrategy/apiAnalysis',
                       component: './handle/analysisStrategy/apiAnalysis',
-                    }
+                    },
+                    //api端分析策略编辑
+                    {
+                      name: 'apiAnalysisEdit',
+                      path: '/handle/analysisStrategy/apiAnalysis/edit',
+                      component: './handle/analysisStrategy/apiAnalysis/edit',
+                    },
                   ]
                 },
               ],
