@@ -186,46 +186,32 @@ export default defineConfig({
                   component: './handle/blockStrategy/edit',
                 },
                 {
-                  name: 'whitelist',
-                  path: '/handle/whitelist',
-                  component: './handle/whitelist',
+                  name: 'analysisStrategy',
+                  path: '/handle/analysisStrategy',
+                  component: './handle/analysisStrategy',
                   routes: [
                     {
-                      path: '/handle/whitelist',
-                      redirect: '/handle/whitelist/sourceIP',
+                      path: '/handle/analysisStrategy',
+                      redirect: '/handle/analysisStrategy/agentAnalysis',
                     },
-                    //源IP白名单
+                    //agent端分析策略
                     {
-                      name: 'sourceIP',
+                      name: 'agentAnalysis',
                       icon: 'smile',
-                      path: '/handle/whitelist/sourceIP',
-                      component: './handle/whitelist/sourceIP',
+                      path: '/handle/analysisStrategy/agentAnalysis',
+                      component: './handle/analysisStrategy/agentAnalysis',
                     },
-                    //目的IP白名单
+                    //agent端分析策略编辑
                     {
-                      name: 'destIP',
-                      icon: 'smile',
-                      path: '/handle/whitelist/destIP',
-                      component: './handle/whitelist/destIP',
+                      name: 'agentAnalysisEdit',
+                      path: '/handle/analysisStrategy/agentAnalysis/edit',
+                      component: './handle/analysisStrategy/agentAnalysis/edit',
                     },
-                    //登录账号白名单
+                    //api端分析策略
                     {
-                      name: 'account',
-                      icon: 'smile',
-                      path: '/handle/whitelist/account',
-                      component: './handle/whitelist/account',
-                    },
-                    //自定义白名单
-                    {
-                      name: 'custom',
-                      icon: 'smile',
-                      path: '/handle/whitelist/custom',
-                      component: './handle/whitelist/custom',
-                    },
-                    {
-                      //自定义白名单编辑
-                      path: '/handle/whitelist/custom/edit',
-                      component: './handle/whitelist/custom/edit',
+                      name: 'apiAnalysis',
+                      path: '/handle/analysisStrategy/apiAnalysis',
+                      component: './handle/analysisStrategy/apiAnalysis',
                     }
                   ]
                 },
