@@ -6,6 +6,7 @@ export interface AgentAnalysisStrategy extends BaseTableListItem{
   category: string;
   enable : string;
   action : string;
+  warningLevel: string;
   items?: AgentAnalysisItem[]
 }
 
@@ -20,6 +21,7 @@ export interface ApiAnalysisStrategy extends BaseTableListItem{
   category: string;
   enable : string;
   action : string;
+  warningLevel: string;
   threshold :number;
   timeUnit: string;
   description:string;

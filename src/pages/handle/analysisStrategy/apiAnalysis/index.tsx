@@ -45,6 +45,15 @@ const ApiAnalysisStrategyFC: React.FC<{}> = () => {
       }
     },
     {
+      title: '告警级别',
+      dataIndex: 'warningLevel',
+      valueEnum: {
+        'high': {text: '严重告警', status: 'Error'},
+        'middle': {text: '普通告警', status: 'Warning'},
+        'low': {text: '低威告警', status: 'Processing'},
+      }
+    },
+    {
       title: '创建封禁策略',
       dataIndex: 'createBlockStrategy',
       valueEnum: {

@@ -3,13 +3,15 @@ import {
   Card,
   Input,
   Form,
-  Switch, message, Row, Col, Checkbox
+  Switch, message, Row, Col, Checkbox, Select
 } from 'antd';
 import { connect, Dispatch,history} from 'umi';
 import React, {FC, useEffect, useState} from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 const FormItem = Form.Item;
 const { TextArea } = Input;
+const { Option } = Select;
+
 interface BasicFormProps {
   submitting: boolean;
   dispatch: Dispatch;
@@ -184,6 +186,14 @@ const BasicForm: FC<BasicFormProps> = (props) => {
                 </Row>
               </Checkbox.Group>
             </Form.Item>
+
+            <FormItem {...formItemLayout} name="warningLevel" label="告警级别">
+              <Select style={{width:"50%"}}>
+                <Option value="low">低危告警</Option>
+                <Option value="middle">中危告警</Option>
+                <Option value="high">严重告警</Option>
+              </Select>
+            </FormItem>
 
             <FormItem
               {...formItemLayout}

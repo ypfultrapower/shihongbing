@@ -230,12 +230,12 @@ export default defineConfig({
               routes: [
                 {
                   path: '/warning',
-                  redirect: '/warning/blockWarning',
+                  redirect: '/warning/warningShow',
                 },
                 {
-                  name: 'blockWarning',
-                  path: '/warning/blockWarning',
-                  component: './warning/blockWarning',
+                  name: 'warningShow',
+                  path: '/warning/warningShow',
+                  component: './warning/warningShow',
                 }
               ],
             },
