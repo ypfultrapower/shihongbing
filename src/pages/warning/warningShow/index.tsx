@@ -15,6 +15,11 @@ const TableList: React.FC<{}> = () => {
   const [currentItem, setCurrentItem] = useState<Partial<WarningItem> | undefined>(undefined);
   const columns:ProColumns<WarningItem>[] = [
     {
+      title: '告警帐号',
+      dataIndex: 'user',
+      key:'user'
+    },
+    {
       title: '告警内容',
       dataIndex: 'content',
       key:'content'
@@ -63,7 +68,7 @@ const TableList: React.FC<{}> = () => {
       key:'isHandled',
       valueEnum: {
         '1': { text: '已处置',status: 'Success'},
-        '0': { text: '为处置',status: 'Error'}
+        '0': { text: '未处置',status: 'Error'}
       }
     },
 

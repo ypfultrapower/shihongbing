@@ -3,6 +3,7 @@ import {SessionTableListItem} from "@/pages/behavior/session/data";
 
 export interface WarningItem extends BaseTableListItem{
   key: string;
+  user:string;
   content: string;
   isHandled: string;
   warningTime: string;
