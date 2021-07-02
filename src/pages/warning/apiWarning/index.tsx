@@ -1,24 +1,19 @@
 import React, {useRef, useState} from "react";
 import ProTable, {ActionType, ProColumns} from "@ant-design/pro-table";
-import {Button, Divider, Dropdown, Menu, message, Modal} from "antd";
+import {Button, Dropdown, Menu, message, Modal} from "antd";
 import {DownOutlined} from "@ant-design/icons";
 import {PageHeaderWrapper} from "@ant-design/pro-layout";
-import {WarningItem} from "@/pages/warning/warningShow/data";
-import {batchHandleWarning, queryWarning} from "@/pages/warning/warningShow/service";
-import DetailModal from "@/pages/warning/warningShow/components/DetailModal";
+import DetailModal from "@/pages/warning/apiWarning/components/DetailModal";
+import {ApiWarningItem} from "@/pages/warning/apiWarning/data";
+import {batchHandleApiWarning, queryApiWarning} from "@/pages/warning/apiWarning/service";
 
 
 
 const TableList: React.FC<{}> = () => {
   const actionRef = useRef<ActionType>();
   const [detailModalVisible,setDetailModalVisible]  = useState<boolean>(false);
-  const [currentItem, setCurrentItem] = useState<Partial<WarningItem> | undefined>(undefined);
-  const columns:ProColumns<WarningItem>[] = [
-    {
-      title: '告警帐号',
-      dataIndex: 'user',
-      key:'user'
-    },
+  const [currentItem, setCurrentItem] = useState<Partial<ApiWarningItem> | undefined>(undefined);
+  const columns:ProColumns<ApiWarningItem>[] = [
     {
       title: '告警内容',
       dataIndex: 'content',
@@ -52,17 +47,6 @@ const TableList: React.FC<{}> = () => {
       }
     },
     {
-      title: '资产IP',
-      dataIndex: 'assetIp',
-      key:'assetIp'
-    },
-    {
-      title: '所属部门',
-      dataIndex: 'assetGroupName',
-      key:'assetGroupName',
-      hideInSearch:true
-    },
-    {
       title: '处置情况',
       dataIndex: 'isHandled',
       key:'isHandled',
@@ -71,24 +55,6 @@ const TableList: React.FC<{}> = () => {
         '0': { text: '未处置',status: 'Error'}
       }
     },
-
-    {
-      title: '关联分析策略',
-      dataIndex: 'relStrategy',
-      valueType: 'option',
-      render:(_, record)=>{
-        return (
-          <a
-            onClick={() =>{
-              //editAndDelete("edit",record)
-            }}
-          >
-            {record.analysisStrategyName}
-          </a>
-        )
-      }
-    },
-
     {
       title: '操作',
       dataIndex: 'option',
@@ -96,14 +62,6 @@ const TableList: React.FC<{}> = () => {
       render: (_, record) =>{
         return (
           <>
-            <a
-              onClick={() =>{
-                //editAndDelete("edit",record)
-              }}
-            >
-              会话查看
-            </a>
-            <Divider type="vertical" />
             {record.isHandled === "false" &&
             <a
               onClick={() =>{
@@ -119,12 +77,12 @@ const TableList: React.FC<{}> = () => {
     }
   ];
 
-  const showDetailModal = (item: WarningItem) =>{
+  const showDetailModal = (item: ApiWarningItem) =>{
     setDetailModalVisible(true);
     setCurrentItem(item);
   }
 
-  const batchHandle = (selectedRows: WarningItem[]) => {
+  const batchHandle = (selectedRows: ApiWarningItem[]) => {
     Modal.confirm({
       title: '批量处置告警',
       content: '确定处置告警吗？',
@@ -140,14 +98,14 @@ const TableList: React.FC<{}> = () => {
           }).map((row) => {
             return {"id":row.id}
           });
-          await batchHandleWarning(params);
+          await batchHandleApiWarning(params);
           hide();
-          message.success('删除成功，即将刷新');
+          message.success('处置成功，即将刷新');
           if(actionRef.current) actionRef.current.reload();
           return true;
         } catch (error) {
           hide();
-          message.error('删除失败，请重试');
+          message.error('处置成功，请重试');
           return false;
         }
       }
@@ -157,7 +115,7 @@ const TableList: React.FC<{}> = () => {
   return (
     <div>
       <PageHeaderWrapper>
-        <ProTable<WarningItem>
+        <ProTable<ApiWarningItem>
           headerTitle="告警列表"
           rowClassName={((record, index) => {
             let className = "light-row";
@@ -199,7 +157,7 @@ const TableList: React.FC<{}> = () => {
               已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
             </div>
           )}
-          request={(params, sorter, filter) => queryWarning({...params, sorter, filter })}
+          request={(params, sorter, filter) => queryApiWarning({...params, sorter, filter })}
           columns={columns}
           rowSelection={{}}
         />

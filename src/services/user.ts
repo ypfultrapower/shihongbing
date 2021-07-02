@@ -22,6 +22,6 @@ export async function queryNotices(): Promise<any> {
  * 查询当前用户菜单权限
  */
 export async function queryMenus():Promise<any> {
-  //return http.get('/api/menu/getRunTimeUserMenus');
-  return http.get('/api/menu/tree');
+  return http.get('/api/menu/getRunTimeUserMenus');
+  //return http.get('/api/menu/tree');
 }

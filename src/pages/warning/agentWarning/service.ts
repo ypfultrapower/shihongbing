@@ -6,7 +6,7 @@ export async function queryWarning(params?: TableListParams) {
   return http.json('/api/warning/page', params);
 }
 
-export async function batchDeleteBlockWarning(params: any) {
+export async function batchDeleteWarning(params: any) {
   return request('/api/warning/delete', {
     method: 'POST',
     data: params

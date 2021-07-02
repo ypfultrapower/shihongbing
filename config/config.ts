@@ -73,6 +73,7 @@ export default defineConfig({
               path: '/dashboard',
               name: 'dashboard',
               icon: 'dashboard',
+              component: './dashboard/analysis',
               routes: [
                 {
                   name: 'analysis',
@@ -223,19 +224,21 @@ export default defineConfig({
                 },
               ],
             },
-
+            //告警管理
             {
-              path: '/warning',
               name: 'warning',
+              path: '/warning',
+              component: './warning',
               routes: [
                 {
-                  path: '/warning',
-                  redirect: '/warning/warningShow',
+                  name: 'agentWarning',
+                  path: '/warning/agentWarning',
+                  component: './warning/agentWarning',
                 },
                 {
-                  name: 'warningShow',
-                  path: '/warning/warningShow',
-                  component: './warning/warningShow',
+                  name: 'apiWarning',
+                  path: '/warning/apiWarning',
+                  component: './warning/apiWarning',
                 }
               ],
             },

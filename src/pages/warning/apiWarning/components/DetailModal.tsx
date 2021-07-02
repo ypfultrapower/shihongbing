@@ -1,12 +1,12 @@
 import React from 'react';
 import {Button, Descriptions, Modal} from 'antd';
 import {Segment} from "semantic-ui-react";
-import {WarningItem} from "@/pages/warning/warningShow/data";
+import {ApiWarningItem} from "@/pages/warning/apiWarning/data";
 
 
 interface DetailModalProps {
   visible: boolean;
-  currentItem: Partial<WarningItem>;
+  currentItem: Partial<ApiWarningItem>;
   onCancel: () => void;
 }
 
@@ -57,9 +57,6 @@ const DetailModal: React.FC<DetailModalProps> = (props) => {
             <Descriptions.Item label="告警级别">{renderLevel(currentItem.warningLevel)}</Descriptions.Item>
             <Descriptions.Item label="告警类型">{renderCategory(currentItem.category)}</Descriptions.Item>
             <Descriptions.Item label="处置情况">{currentItem.isHandled==="true"?"已处置":"未处置"}</Descriptions.Item>
-            <Descriptions.Item label="资产IP">{currentItem.assetIp}</Descriptions.Item>
-            <Descriptions.Item label="资产所属部门">{currentItem.assetGroupName}</Descriptions.Item>
-            <Descriptions.Item label="关联分析策略">{currentItem.analysisStrategyName}</Descriptions.Item>
           </Descriptions>
         </Segment>
   </Modal>)

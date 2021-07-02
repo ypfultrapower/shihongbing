@@ -226,6 +226,8 @@ const OperationModal: React.FC<FormModal> = (props) => {
         >
           <Select placeholder="请选择任务类别">
             <Option value="com.ultrapower.ueba.task.AgentRunningStatusCheck">Agent运行状态检测任务</Option>
+            <Option value="com.ultrapower.ueba.task.EvliSourceAnalysisTask">恶意源分析任务</Option>
+            <Option value="com.ultrapower.ueba.task.LastAccountAnalysisTask">失陷帐号分析任务</Option>
           </Select>
         </FormItem>
 

@@ -1,19 +1,17 @@
-import { EllipsisOutlined } from '@ant-design/icons';
-import { Col, Dropdown, Menu, Row } from 'antd';
+import {EllipsisOutlined} from '@ant-design/icons';
+import {Card, Col, Dropdown, Menu, Row} from 'antd';
 import React, { Component, Suspense } from 'react';
 import { GridContent } from '@ant-design/pro-layout';
 import { RadioChangeEvent } from 'antd/es/radio';
 import { RangePickerProps } from 'antd/es/date-picker/generatePicker';
 import moment from 'moment';
 import { connect, Dispatch } from 'umi';
-
-import PageLoading from './components/PageLoading';
 import { getTimeDistance } from './utils/utils';
 import { AnalysisData } from './data.d';
 import styles from './style.less';
-
-const IntroduceRow = React.lazy(() => import('./components/IntroduceRow'));
-const SalesCard = React.lazy(() => import('./components/SalesCard'));
+import {Icon} from "semantic-ui-react";
+import BlockStrategyPie from "@/pages/dashboard/analysis/components/BlockStrategyPie";
+import WarningColumn from "@/pages/dashboard/analysis/components/WarningColumn";
 const TopSearch = React.lazy(() => import('./components/TopSearch'));
 const ProportionSales = React.lazy(() => import('./components/ProportionSales'));
 const OfflineData = React.lazy(() => import('./components/OfflineData'));
@@ -46,6 +44,7 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
   componentDidMount() {
     const { dispatch } = this.props;
     this.reqRef = requestAnimationFrame(() => {
+      //获取分析数据
       dispatch({
         type: 'dashboardAndanalysis/fetch',
       });
@@ -117,12 +116,10 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
   };
 
   render() {
-    const { rangePickerValue, salesType, currentTabKey } = this.state;
+    const {salesType, currentTabKey } = this.state;
     const { dashboardAndanalysis, loading } = this.props;
     const {
-      visitData,
       visitData2,
-      salesData,
       searchData,
       offlineData,
       offlineChartData,
@@ -155,19 +152,60 @@ class Analysis extends Component<AnalysisProps, AnalysisState> {
     return (
         <GridContent>
           <React.Fragment>
-            <Suspense fallback={<PageLoading />}>
-              <IntroduceRow loading={loading} visitData={visitData} />
-            </Suspense>
-            <Suspense fallback={null}>
-              <SalesCard
-                rangePickerValue={rangePickerValue}
-                salesData={salesData}
-                isActive={this.isActive}
-                handleRangePickerChange={this.handleRangePickerChange}
-                loading={loading}
-                selectDate={this.selectDate}
-              />
-            </Suspense>
+            <Row
+              gutter={24}
+              style={{
+                marginTop: 24,
+              }}
+            >
+              <Col xl={6} lg={24} md={24} sm={24} xs={24}>
+                <Card title={"Agent接入情况"} style={{height:"200px"}}>
+                  <p><Icon color='red' name='computer' style={{paddingRight:"40px"}}/><strong>Agent入网数: </strong>{20}</p>
+                  <p><Icon color='green' name='computer' style={{paddingRight:"40px"}}/><strong>Agent在线数: </strong>{20}</p>
+                  <p><Icon color='green' name='percent' style={{paddingRight:"40px"}}/><strong>在线率: </strong>{"50%"}</p>
+                </Card>
+              </Col>
+
+              <Col xl={6} lg={24} md={24} sm={24} xs={24}>
+                <Card title={"用户会话情况"} style={{height:"200px"}}>
+                  <p><Icon color='blue' name='video' style={{paddingRight:"40px"}}/><strong>在线会话: </strong>{20}</p>
+                  <p><Icon color='red' name='video' style={{paddingRight:"40px"}}/><strong>绕行会话: </strong>{20}</p>
+                  <p><Icon color='green' name='percent' style={{paddingRight:"40px"}}/><strong>绕行率: </strong>{"50%"}</p>
+                </Card>
+              </Col>
+
+              <Col xl={6} lg={24} md={24} sm={24} xs={24}>
+                <Card title={"阻断策略情况"} style={{height:"200px"}}>
+                  <BlockStrategyPie/>
+                </Card>
+              </Col>
+
+              <Col xl={6} lg={24} md={24} sm={24} xs={24}>
+                <Card title={"分析策略情况"} style={{height:"200px"}}>
+                  <BlockStrategyPie/>
+                </Card>
+              </Col>
+            </Row>
+
+
+            <Row
+              gutter={24}
+              style={{
+                marginTop: 24,
+              }}
+            >
+              <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+                <Card title={"近7天告警情况"}>
+                  <WarningColumn/>
+                </Card>
+              </Col>
+              <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+                <Card title={"近7天告警情况"}>
+                  <WarningColumn/>
+                </Card>
+              </Col>
+            </Row>
+
             <Row
               gutter={24}
               style={{
