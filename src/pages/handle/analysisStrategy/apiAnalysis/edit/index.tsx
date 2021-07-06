@@ -191,7 +191,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               <Select style={{width:"50%"}}>
                 <Option value="low">低危告警</Option>
                 <Option value="middle">中危告警</Option>
-                <Option value="high">严重告警</Option>
+                <Option value="high">高危告警</Option>
               </Select>
             </FormItem>
 

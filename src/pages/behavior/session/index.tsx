@@ -8,9 +8,15 @@ import DetailModal from "@/pages/behavior/session/components/DetailModal";
 import RecordModal from "@/pages/behavior/session/components/RecordModal";
 import moment from "moment";
 import {DownOutlined} from "@ant-design/icons";
+import {history} from "@@/core/history";
 
 
 const TableList: React.FC<{}> = () => {
+  const state = history.location.state;
+  let sessionId = "";
+  if(state){
+    sessionId = state.sessionId;
+  }
   const actionRef = useRef<ActionType>();
   const [detailModalVisible,setDetailModalVisible]  = useState<boolean>(false);
   const [recordModalVisible,setRecordModalVisible]  = useState<boolean>(false);
@@ -232,6 +238,7 @@ const TableList: React.FC<{}> = () => {
               onDoubleClick:event => {showDetailModal(record)}
             }
           }}
+          params={{id:sessionId}}
           request={(params, sorter, filter) => querySession({...params, sorter, filter })}
           columns={columns}
           rowSelection={{}}

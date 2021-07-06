@@ -15,11 +15,11 @@ const DetailModal: React.FC<DetailModalProps> = (props) => {
 
   const renderLevel = (action: string | undefined):any => {
     if (action === "high") {
-      return (<span style={{fontSize: 14}}>告</span>)
+      return (<span style={{fontSize: 14}}>高危告警</span>)
     } else if (action === "low") {
-      return (<span style={{fontSize: 14}}>低</span>)
+      return (<span style={{fontSize: 14}}>低危告警</span>)
     } else if (action === "middle") {
-      return (<span style={{fontSize: 14}}>中</span>)
+      return (<span style={{fontSize: 14}}>中危告警</span>)
     }
   };
 
@@ -56,7 +56,7 @@ const DetailModal: React.FC<DetailModalProps> = (props) => {
             <Descriptions.Item label="告警内容">{currentItem.content}</Descriptions.Item>
             <Descriptions.Item label="告警级别">{renderLevel(currentItem.warningLevel)}</Descriptions.Item>
             <Descriptions.Item label="告警类型">{renderCategory(currentItem.category)}</Descriptions.Item>
-            <Descriptions.Item label="处置情况">{currentItem.isHandled==="true"?"已处置":"未处置"}</Descriptions.Item>
+            <Descriptions.Item label="处置情况">{currentItem.isHandle==="1"?"已处置":"未处置"}</Descriptions.Item>
           </Descriptions>
         </Segment>
   </Modal>)

@@ -48,9 +48,9 @@ const AgentAnalysisStrategyFC: React.FC<{}> = () => {
       title: '告警级别',
       dataIndex: 'warningLevel',
       valueEnum: {
-        'high': {text: '严重告警', status: 'Error'},
-        'middle': {text: '普通告警', status: 'Warning'},
-        'low': {text: '低威告警', status: 'Processing'},
+        'high': {text: '高危告警', status: 'Error'},
+        'middle': {text: '中危告警', status: 'Warning'},
+        'low': {text: '低危告警', status: 'Processing'},
       }
     },
     {

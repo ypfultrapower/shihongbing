@@ -180,7 +180,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
             <FormItem
               {...formItemLayout}
               label={"防火墙策略变更命令正则集合"}
-              name="commands"
+              name="items"
               help={"请使用添加按钮进行命令添加"}
             >
               <RegTableForm/>
@@ -212,7 +212,7 @@ const BasicForm: FC<BasicFormProps> = (props) => {
               <Select style={{width:"50%"}}>
                 <Option value="low">低危告警</Option>
                 <Option value="middle">中危告警</Option>
-                <Option value="high">严重告警</Option>
+                <Option value="high">高危告警</Option>
               </Select>
             </FormItem>
 

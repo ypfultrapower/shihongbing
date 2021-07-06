@@ -1,12 +1,11 @@
 import React, {useRef, useState} from "react";
 import ProTable, {ActionType, ProColumns} from "@ant-design/pro-table";
-import {Button, Dropdown, Menu, message, Modal} from "antd";
+import {Button, Card, Dropdown, Menu, message, Modal} from "antd";
 import {DownOutlined} from "@ant-design/icons";
-import {PageHeaderWrapper} from "@ant-design/pro-layout";
 import DetailModal from "@/pages/warning/apiWarning/components/DetailModal";
 import {ApiWarningItem} from "@/pages/warning/apiWarning/data";
 import {batchHandleApiWarning, queryApiWarning} from "@/pages/warning/apiWarning/service";
-
+import moment from "moment";
 
 
 const TableList: React.FC<{}> = () => {
@@ -15,22 +14,31 @@ const TableList: React.FC<{}> = () => {
   const [currentItem, setCurrentItem] = useState<Partial<ApiWarningItem> | undefined>(undefined);
   const columns:ProColumns<ApiWarningItem>[] = [
     {
-      title: '告警内容',
-      dataIndex: 'content',
-      key:'content'
-    },
-    {
       title: '告警时间',
       dataIndex: 'warningTime',
-      key:'warningTime'
+      key:'startTime',
+      valueType: 'dateTime',
+      sorter: (a,b)=>{
+        return moment(a.warningTime, 'YYYY-MM-DD HH:mm:ss').toDate().getTime() - moment(b.warningTime, "YYYY-MM-DD HH:mm:ss").toDate().getTime()
+      }
+    },
+    {
+      title: '告警结束时间',
+      dataIndex: 'warningTime',
+      hideInTable:true,
+      key:'endTime',
+      valueType: 'dateTime',
+      sorter: (a,b)=>{
+        return moment(a.warningTime, 'YYYY-MM-DD HH:mm:ss').toDate().getTime() - moment(b.warningTime, "YYYY-MM-DD HH:mm:ss").toDate().getTime()
+      }
     },
     {
       title: '告警级别',
       dataIndex: 'warningLevel',
       valueEnum: {
-        'high': {text: '严重告警', status: 'Error'},
-        'middle': {text: '普通告警', status: 'Warning'},
-        'low': {text: '低威告警', status: 'Processing'},
+        'high': {text: '高危告警', status: 'Error'},
+        'middle': {text: '中危告警', status: 'Warning'},
+        'low': {text: '低危告警', status: 'Processing'},
       }
     },
     {
@@ -48,8 +56,8 @@ const TableList: React.FC<{}> = () => {
     },
     {
       title: '处置情况',
-      dataIndex: 'isHandled',
-      key:'isHandled',
+      dataIndex: 'isHandle',
+      key:'isHandle',
       valueEnum: {
         '1': { text: '已处置',status: 'Success'},
         '0': { text: '未处置',status: 'Error'}
@@ -62,10 +70,12 @@ const TableList: React.FC<{}> = () => {
       render: (_, record) =>{
         return (
           <>
-            {record.isHandled === "false" &&
+            {record.isHandle === "0" &&
             <a
               onClick={() =>{
-                //editAndDelete("edit",record)
+                const array: ApiWarningItem[] = new Array();
+                array.push(record);
+                batchHandle(array);
               }}
             >
               处置
@@ -92,9 +102,8 @@ const TableList: React.FC<{}> = () => {
         const hide = message.loading('正在处置');
         if (!selectedRows) return true;
         try {
-          selectedRows.filter(value => value.isHandled==="false");
           const params = selectedRows.filter((item,index,array)=>{
-            return item.isHandled === "false";
+            return item.isHandle === "0";
           }).map((row) => {
             return {"id":row.id}
           });
@@ -111,10 +120,22 @@ const TableList: React.FC<{}> = () => {
       }
     });
   };
-
+  const detailColumns :ProColumns<ApiWarningItem>[] =[
+    {
+      title: '告警内容',
+      dataIndex: 'content',
+      key:'content'
+    }
+  ];
+  const expandableRender = (record: ApiWarningItem)=>{
+    return <Card title="其他详细信息" bordered={false} headStyle={{backgroundColor:"lightskyblue"}} bodyStyle={{backgroundColor:"#e9e9e9"}}>
+      {detailColumns.map(value => (
+        <p><strong>{value.title}: </strong>{record[value.dataIndex as string]}</p>
+      ))}
+    </Card>;
+  };
   return (
     <div>
-      <PageHeaderWrapper>
         <ProTable<ApiWarningItem>
           headerTitle="告警列表"
           rowClassName={((record, index) => {
@@ -128,6 +149,10 @@ const TableList: React.FC<{}> = () => {
             return {
               onDoubleClick:event => {showDetailModal(record)}
             }
+          }}
+          expandable={{
+            expandedRowRender:record =>{return expandableRender(record)},
+            expandRowByClick:false
           }}
           toolBarRender={(action, { selectedRows }) => [
             selectedRows && selectedRows.length > 0 && (
@@ -161,7 +186,6 @@ const TableList: React.FC<{}> = () => {
           columns={columns}
           rowSelection={{}}
         />
-      </PageHeaderWrapper>
       {/*详细信息modal框*/}
       <DetailModal visible={detailModalVisible}
                    currentItem={currentItem?currentItem:{}}

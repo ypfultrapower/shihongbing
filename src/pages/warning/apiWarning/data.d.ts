@@ -4,7 +4,7 @@ import {SessionTableListItem} from "@/pages/behavior/session/data";
 export interface ApiWarningItem extends BaseTableListItem{
   key: string;
   content: string;
-  isHandled: string;
+  isHandle: string;
   warningTime: string;
   warningLevel: string;
   category:string;

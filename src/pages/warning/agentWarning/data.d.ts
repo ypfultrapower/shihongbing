@@ -5,7 +5,7 @@ export interface WarningItem extends BaseTableListItem{
   key: string;
   user:string;
   content: string;
-  isHandled: string;
+  isHandle: string;
   warningTime: string;
   warningLevel: string;
   analysisStrategyName:string;
